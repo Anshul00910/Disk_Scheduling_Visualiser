@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disk Scheduling Visualizer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">DSV</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#algorithms" class="nav-link">Algorithms</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+            <button class="theme-toggle" id="theme-toggle">🌓</button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="bg-animation" id="bg-animation"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Disk Scheduling Visualizer</h1>
+            <p class="hero-tagline">Effortlessly Visualize and Master Complex Disk Scheduling Algorithms</p>
+            <button class="cta-button">Explore Algorithms</button>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="info-content">
+            <div class="info-item">
+                <div class="info-icon">📊</div>
+                <div class="info-text">
+                    <h3>What is Disk Scheduling?</h3>
+                    <p>Disk scheduling is the method operating systems use to decide which <span class="highlight">pending I/O requests</span> should be serviced next. Efficient disk scheduling algorithms minimize seek time, optimize throughput, and reduce latency in data access operations.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🚀</div>
+                <div class="info-text">
+                    <h3>Why It Matters</h3>
+                    <p>Over <span class="highlight">20% of system time</span> can be optimized with proper disk scheduling! Even in modern SSDs, efficient scheduling algorithms can significantly improve system performance and response times.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🧠</div>
+                <div class="info-text">
+                    <h3>Learn By Visualization</h3>
+                    <p>Our interactive visualizations help you understand <span class="highlight">complex concepts</span> in an intuitive way. See how different algorithms handle the same request pattern and compare their efficiency in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Algorithm Explorer -->
+    <section class="algorithm-explorer" id="algorithms">
+        <div class="explorer-content">
+            <h2 class="explorer-title">Algorithm Explorer</h2>
+            <div class="timeline">
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">FCFS</div>
+                    <p class="algorithm-name">FCFS</p>
+                    <div class="tooltip">
+                        Requests are addressed in the order they arrive without any reordering. Simple but often inefficient for disk operations.
+                    </div>
+                </div>
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">SSTF</div>
+                    <p class="algorithm-name">SSTF</p>
+                    <div class="tooltip">
+                        Always services the request closest to the current head position. Can cause starvation of some requests.
+                    </div>
+                </div>
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">SCAN</div>
+                    <p class="algorithm-name">SCAN</p>
+                    <div class="tooltip">
+                        The disk arm moves in one direction servicing requests until it reaches the end, then reverses direction.
+                    </div>
+                </div>
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">C-SCAN</div>
+                    <p class="algorithm-name">Circular SCAN</p>
+                    <div class="tooltip">
+                        Like SCAN, but when reaching the end, the arm returns to the beginning without servicing requests on the way back.
+                    </div>
+                </div>
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">LOOK</div>
+                    <p class="algorithm-name">LOOK</p>
+                    <div class="tooltip">
+                        Similar to SCAN but the arm only goes as far as the last request in each direction, then reverses.
+                    </div>
+                </div>
+                <div class="algorithm-item">
+                    <div class="algorithm-icon">CLOOK</div>
+                    <p class="algorithm-name">C-LOOK</p>
+                    <div class="tooltip">
+                        Like C-SCAN but the arm only goes as far as the last request in each direction before jumping.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">About</h3>
+                <p>Disk Scheduling Visualizer is an educational tool designed to help students and professionals understand disk scheduling algorithms through interactive visualizations.</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Developed By:</h3>
+                <div class="team-members">
+                  <p>Anshul Sharma</p>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Contact</h3>
+                <p>Have questions or feedback? We'd love to hear from you!</p>
+                <button class="contact-button" id="contact-btn">Contact Us</button>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Disk Scheduling Visualizer. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Loading Animation
+        
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            themeToggle.textContent = document.body.classList.contains('light-mode') ? '🌙' : '🌓';
+        });
+
+        // Background Animation
+        const bgAnimation = document.getElementById('bg-animation');
+        
+        // Create particles
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = Math.random() * 5 + 1 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.backgroundColor = '#7953d2';
+            particle.style.borderRadius = '50%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.opacity = Math.random() * 0.5;
+            particle.style.animation = `float ${Math.random() * 10 + 5}s infinite linear`;
+            
+            // Random floating animation
+            const keyframes = `
+                @keyframes float {
+                    0% {
+                        transform: translate(0, 0) rotate(0deg);
+                    }
+                    33% {
+                        transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(120deg);
+                    }
+                    66% {
+                        transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(240deg);
+                    }
+                    100% {
+                        transform: translate(0, 0) rotate(360deg);
+                    }
+                }
+            `;
+            
+            const style = document.createElement('style');
+            style.innerHTML = keyframes;
+            document.head.appendChild(style);
+            
+            bgAnimation.appendChild(particle);
+        }
+
+        // Scroll animation for info items
+        const infoItems = document.querySelectorAll('.info-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        infoItems.forEach(item => {
+            observer.observe(item);
+        });
+        
+        // Contact button popup
+        const contactBtn = document.getElementById('contact-btn');
+        contactBtn.addEventListener('click', () => {
+            alert('Contact form will be available in the full version!');
+        });
+
+        // CTA button action
+        const ctaButton = document.querySelector('.cta-button');
+        ctaButton.addEventListener('click', () => {
+            document.querySelector('#algorithms').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+
+        // Make background interactive
+        document.addEventListener('mousemove', (e) => {
+            const particles = bgAnimation.children;
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            for (let i = 0; i < particles.length; i++) {
+                const particle = particles[i];
+                const speed = parseFloat(particle.style.width) * 0.05;
+                const offsetX = (mouseX - 0.5) * speed;
+                const offsetY = (mouseY - 0.5) * speed;
+                
+                particle.style.transform = `translate(${offsetX * 50}px, ${offsetY * 50}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
