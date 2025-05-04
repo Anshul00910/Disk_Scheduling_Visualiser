@@ -393,17 +393,6 @@ footer {
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.light-mode .social-link {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: var(--text-dark);
-}
-
-.social-link:hover {
-  background-color: var(--primary-light);
-  color: white;
-  transform: translateY(-3px);
-}
-
 .contact-button {
   padding: 0.7rem 1.5rem;
   background-color: var(--secondary);
