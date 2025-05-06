@@ -1,154 +1,133 @@
-function isValidInputNumbers(requestSequence, head) {
-  for (i = 0; i < requestSequence.length; ++i)
-    if (requestSequence[i] > 199 || requestSequence[i] < 0)
-      return false;
-    
-  if (head > 199 || head < 0)
-    return false;
-
-  return true;
-}
-
-function sstf_man(requestSequenceSstf, headSstf) {
-
-  const len = requestSequenceSstf.length;
-  requestFinalOrderSstf = [headSstf];
-  totalSeekCountSstf = 0;
-
-  for (i = 0; i < len; ++i) {
-    let tmp = [];
-    for (j = 0; j < requestSequenceSstf.length; ++j)
-      tmp.push(Math.abs( requestFinalOrderSstf[requestFinalOrderSstf.length - 1] - requestSequenceSstf[j]));
-    var minIndex = tmp.indexOf(Math.min.apply(null, tmp));
-    totalSeekCountSstf += tmp[minIndex];
-    requestFinalOrderSstf.push(requestSequenceSstf[minIndex]);
-    requestSequenceSstf.splice(minIndex, 1);
-  }
-  return [totalSeekCountSstf, requestFinalOrderSstf];
-}
-
-function resetSstfResult() {
-  let ele = document.getElementById("sstf_totalSeekCount");
-  ele.innerText = "";
-  ele = document.getElementById("sstf_finalOrder");
-  ele.innerText = "";
-  ele = document.getElementById("sstf_averageSeekCount");
-  ele.innerText = "";
-  ele = document.getElementById("chartContainer");
-  ele.style.display = "none";
-}
-
-
-function sstf_click() {
-  let requestSequenceSstf = document.getElementById("Sequence").value;
-  let headSstf = document.getElementById("Head").value;
+document.addEventListener('DOMContentLoaded', function() {
+  const visualizeBtn = document.getElementById('visualize-btn');
+  const resultsSection = document.getElementById('results');
+  const totalSeekTimeEl = document.getElementById('total-seek-time');
+  const averageSeekTimeEl = document.getElementById('average-seek-time');
+  const seekSequenceEl = document.getElementById('seek-sequence');
+  const chartContainer = document.getElementById('chart-container');
   
-  requestSequenceSstf = requestSequenceSstf
-    .split(/ |,/)
-    .filter(function (character) {
-      return character !== "";
-    });
-
-  if (requestSequenceSstf.length === 0) {
-    alert("invalid input!!!");
-    return;
-  }
-
-  for (i = 0; i < requestSequenceSstf.length; ++i) {
-    if (!Number.isInteger(+requestSequenceSstf[i]) || !(+requestSequenceSstf[i] >= 0)) {
-      alert("invalid input!!! Only integer values are valid");
-      return;
-    }
-  }
-
-  if (headSstf.length === 0) {
-    alert("invalid input!!! ");
-    return;
-  }
-
-  if (!Number.isInteger(+headSstf) || Number.isInteger(+headSstf) < 0) {
-    alert("invalid input!!! Only integer values are valid");
-    return;
-  }
-  headSstf = +headSstf;
-  requestSequenceSstf = requestSequenceSstf
-    .toString()
-    .split(/ |,/)
-    .filter(function (character) {
-      return character !== "";
-    })
-    .map(function (a) {
-      return +a;
-    });
-
-  if (!isValidInputNumbers(requestSequenceSstf, headSstf)) {
-    alert("Got invalid input!!! Integral value(x) should be in the range 0<=x<=199");
-    return;
-  }
-  const result = sstf_man(requestSequenceSstf, headSstf);
-
-  let ele = document.getElementById("sstf_totalSeekCount");
-  ele.innerText = result[0];
-  
-  ele = document.getElementById("sstf_finalOrder");
-  ele.innerText = "";
-  for (h = 0; h < result[1].length; ++h) {
-    if (h % 6 === 0 && h !== result[1].length - 1)
-      ele.innerText += "\n";
-    
-    if (h !== result[1].length - 1) {
-      ele.innerText += result[1][h] + ", ";
-      continue;
-    }
-    ele.innerText += result[1][h];
-  }
-
-  ele = document.getElementById("sstf_averageSeekCount");
-  ele.innerText = (result[0] / (result[1].length - 1)).toFixed(2);
-  
-  ele = document.getElementById("chartContainer");
-  ele.style.display = "block";
-
-  const ary = [];
-  result[1].forEach(function (p) {
-    ary.push({ y: p });
-  });
-
-  // Graph Using CanvasJs
-  const chart = new CanvasJS.Chart("chartContainer", {
+  // Chart configuration (similar to your FCFS)
+  let chart = new CanvasJS.Chart("chart-container", {
     animationEnabled: true,
-    animationDuration: 300 * (ary.length - 1),
-    theme: "light2",
-    zoomEnabled: true,
+    theme: "dark2",
+    backgroundColor: "transparent",
     title: {
-      text: "",
-    },
-    axisY: {
-      title: "Disk Numbers",
-      titleFontColor: "rgb(0,0,0)",
+      text: "SSTF Disk Scheduling Visualization",
+      fontColor: "#00bcd4",
+      fontSize: 20
     },
     axisX: {
-      title: "Request sequence",
-      titleFontColor: "rgb(0,0,0)",
-      minimum: 0,
-      interval: 1
+      title: "Request Sequence",
+      titleFontColor: "#ff4081",
+      lineColor: "#4527a0",
+      tickColor: "#4527a0",
+      labelFontColor: "#f5f5f5"
     },
-    data: [
-      {
-        type: "line",
-        indexLabelFontSize: 16,
-        dataPoints: ary,
-      },
-    ],
-    
+    axisY: {
+      title: "Disk Position",
+      titleFontColor: "#ff4081",
+      lineColor: "#4527a0",
+      tickColor: "#4527a0",
+      labelFontColor: "#f5f5f5",
+      maximum: 200,
+      minimum: 0
+    },
+    data: [{
+      type: "line",
+      indexLabelFontColor: "#f5f5f5",
+      lineColor: "#00bcd4",
+      markerColor: "#ff4081",
+      markerSize: 10,
+      dataPoints: []
+    }]
   });
-  chart.render();
-  
-  let modal = document.getElementById("myModal");
 
-  let span = document.getElementsByClassName("close")[0];
+  window.addEventListener("resize", function () {
+    chart.render(); // Re-render chart on window resize
+  });
 
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
-}
+  visualizeBtn.addEventListener('click', function() {
+    // Get inputs
+    const sequenceInput = document.getElementById('sequence').value;
+    const headInput = document.getElementById('head').value;
+    
+    if (!sequenceInput || !headInput) {
+      alert("Please enter both the request sequence and initial head position.");
+      return;
+    }
+    
+    // Parse input values
+    const requestSequence = sequenceInput.split(',').map(num => parseInt(num.trim()));
+    const initialHead = parseInt(headInput);
+    
+    // Check if values are valid
+    if (isNaN(initialHead) || initialHead < 0 || initialHead > 199) {
+      alert("Initial head position must be between 0 and 199.");
+      return;
+    }
+    
+    if (requestSequence.some(isNaN) || requestSequence.some(num => num < 0 || num > 199)) {
+      alert("All request positions must be between 0 and 199.");
+      return;
+    }
+    
+    // Calculate SSTF algorithm results
+    const results = calculateSSTF(requestSequence, initialHead);
+    
+    // Update results section
+    totalSeekTimeEl.textContent = results.totalSeekTime;
+    averageSeekTimeEl.textContent = (results.totalSeekTime / requestSequence.length).toFixed(2);
+    seekSequenceEl.textContent = results.seekSequence.join(' → ');
+
+    // Update chart
+    chart.options.data[0].dataPoints = results.chartData;
+    chart.render();
+    
+    // Show results section
+    resultsSection.style.display = 'block';
+  });
+
+  // Calculate SSTF algorithm
+  function calculateSSTF(requestSequence, initialHead) {
+    let totalSeekTime = 0;
+    let currentPosition = initialHead;
+    let seekSequence = [initialHead];
+    let chartData = [{ x: 0, y: initialHead, indexLabel: "Head" }];
+    let processed = new Array(requestSequence.length).fill(false);
+
+    // Process requests by always choosing the closest one
+    while (seekSequence.length < requestSequence.length + 1) {
+      let closestRequestIndex = -1;
+      let minDistance = Infinity;
+
+      // Find the closest request
+      for (let i = 0; i < requestSequence.length; i++) {
+        if (!processed[i]) {
+          const distance = Math.abs(requestSequence[i] - currentPosition);
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestRequestIndex = i;
+          }
+        }
+      }
+
+      // Update seek time and move the head
+      totalSeekTime += minDistance;
+      currentPosition = requestSequence[closestRequestIndex];
+      seekSequence.push(currentPosition);
+      processed[closestRequestIndex] = true;
+
+      chartData.push({
+        x: seekSequence.length - 1,
+        y: currentPosition,
+        indexLabel: currentPosition.toString()
+      });
+    }
+
+    return {
+      totalSeekTime,
+      seekSequence,
+      chartData
+    };
+  }
+});

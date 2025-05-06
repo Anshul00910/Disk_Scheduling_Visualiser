@@ -1,146 +1,118 @@
-function isValidInputNumbers(requestSequence, head) {
-  for (i = 0; i < requestSequence.length; ++i) 
-    if (requestSequence[i] > 199 || requestSequence[i] < 0) 
-      return false;
-    
-  if (head > 199 || head < 0) 
-    return false;
+document.addEventListener('DOMContentLoaded', function() {
+  const visualizeBtn = document.getElementById('visualize-btn');
+  const resultsSection = document.getElementById('results');
+  const totalSeekTimeEl = document.getElementById('total-seek-time');
+  const averageSeekTimeEl = document.getElementById('average-seek-time');
+  const seekSequenceEl = document.getElementById('seek-sequence');
+  const chartContainer = document.getElementById('chart-container');
   
-  return true;
-}
-
-function fcfs_man(requestSequenceFcfs, headFcfs) {
-
-  requestFinalOrderFcfs = [headFcfs];
-  for (i = 0; i < requestSequenceFcfs.length; ++i) {
-    requestFinalOrderFcfs.push(requestSequenceFcfs[i]);
-  }
-  let totalSeekCountFcfs = Math.abs(requestSequenceFcfs[0] - headFcfs);
-  for (i = 1; i < requestSequenceFcfs.length; ++i) {
-    totalSeekCountFcfs += Math.abs(
-      requestSequenceFcfs[i] - requestSequenceFcfs[i - 1]
-    );
-  }
-  return [totalSeekCountFcfs, requestFinalOrderFcfs];
-}
-
-function resetFcfsResult() {
-  let ele = document.getElementById('fcfs_totalSeekCount');
-  ele.innerText = '';
-  ele = document.getElementById('fcfs_finalOrder');
-  ele.innerText = '';
-  ele = document.getElementById('fcfs_averageSeekCount');
-  ele.innerText = '';
-  ele = document.getElementById('chartContainer');
-  ele.style.display = 'none';
-}
-
-function fcfs_click() {
-
-  let requestSequenceFcfs = document.getElementById("Sequence").value;
-  let headFcfs = document.getElementById("Head").value;
-  requestSequenceFcfs = requestSequenceFcfs
-    .split(/ |,/)
-    .filter(function (character) {
-      return character !== "";
-    });
-  if (requestSequenceFcfs.length === 0) {
-    alert("invalid input!!!");
-    return;
-  }
-
-  for (i = 0; i < requestSequenceFcfs.length; ++i) {
-    if (!Number.isInteger(+requestSequenceFcfs[i])) {
-      alert("invalid input!!! Only integer values are valid");
-      return;
-    }
-  }
-
-  if (headFcfs.length === 0 || headFcfs.length > 2) {
-    alert("invalid input!!! ");
-    return;
-  }
-
-  if (!Number.isInteger(+headFcfs) || Number.isInteger(+headFcfs) < 0 ) {
-    alert("invalid input!!! Only integer values are valid");
-    return;
-  }
-
-  headFcfs = +headFcfs;
-  requestSequenceFcfs = requestSequenceFcfs.toString()
-    .split(/ |,/)
-    .filter(function (character) {
-      return character !== "";
-    }).map(function (a) { return +a; });
-
-  if (!isValidInputNumbers(requestSequenceFcfs, headFcfs)) {
-    alert(
-      "invalid input!!! Integral value(x) should be in the range 0<=x<=199"
-    );
-    return;
-  }
-
-  const result = fcfs_man(requestSequenceFcfs, headFcfs);
-
-  let ele = document.getElementById('fcfs_totalSeekCount');
-  ele.innerText = result[0];
-  
-  ele = document.getElementById('fcfs_finalOrder');
-  ele.textContent = '';
-  for (h = 0; h < result[1].length; ++h) {
-    if (h % 6 === 0 && h !== result[1].length - 1) {
-      ele.innerText += "\n";
-    }
-    if (h !== result[1].length - 1) {
-      ele.innerText += result[1][h] + ", ";
-      continue;
-    }
-    
-    ele.innerText += result[1][h];
-  }
-
-  ele = document.getElementById('fcfs_averageSeekCount');
-  ele.innerText = (result[0] / (result[1].length - 1)).toFixed(2);
-  
-  ele = document.getElementById('chartContainer');
-  ele.style.display = 'block';
-
-  const ary = [];
-  result[1].forEach(function (p) {
-    ary.push({ y: p });
-  });
-
-  const chart = new CanvasJS.Chart("chartContainer", {
+  // Chart configuration
+  let chart = new CanvasJS.Chart("chart-container", {
     animationEnabled: true,
-    animationDuration: 300 * (ary.length - 1),
-    theme: "light2",
-    zoomEnabled: true,
+    theme: "dark2",
+    backgroundColor: "transparent",
     title: {
-      text: ""
-    },
-    axisY: {
-      title: "Disk Numbers",
-      titleFontColor: "rgb(0,0,0)"
+      text: "FCFS Disk Scheduling Visualization",
+      fontColor: "#00bcd4",
+      fontSize: 20
     },
     axisX: {
-      title: "Request sequence",
-      titleFontColor: "rgb(0,0,0)",
-      minimum: 0,
-      interval: 1
+      title: "Request Sequence",
+      titleFontColor: "#ff4081",
+      lineColor: "#4527a0",
+      tickColor: "#4527a0",
+      labelFontColor: "#f5f5f5"
+    },
+    axisY: {
+      title: "Disk Position",
+      titleFontColor: "#ff4081",
+      lineColor: "#4527a0",
+      tickColor: "#4527a0",
+      labelFontColor: "#f5f5f5",
+      maximum: 200,
+      minimum: 0
     },
     data: [{
       type: "line",
-      indexLabelFontSize: 16,
-      dataPoints: ary
+      indexLabelFontColor: "#f5f5f5",
+      lineColor: "#00bcd4",
+      markerColor: "#ff4081",
+      markerSize: 10,
+      dataPoints: []
     }]
   });
-  chart.render();
+  window.addEventListener("resize", function () {
+chart.render(); // Re-render chart on window resize
+});
 
-  let modal = document.getElementById("myModal");
-
-  let span = document.getElementsByClassName("close")[0];
-
-  span.onclick = function () {
-    modal.style.display = "none";
+  visualizeBtn.addEventListener('click', function() {
+    // Get inputs
+    const sequenceInput = document.getElementById('sequence').value;
+    const headInput = document.getElementById('head').value;
+    
+    if (!sequenceInput || !headInput) {
+      alert("Please enter both the request sequence and initial head position.");
+      return;
+    }
+    
+    // Parse input values
+    const requestSequence = sequenceInput.split(',').map(num => parseInt(num.trim()));
+    const initialHead = parseInt(headInput);
+    
+    // Check if values are valid
+    if (isNaN(initialHead) || initialHead < 0 || initialHead > 199) {
+      alert("Initial head position must be between 0 and 199.");
+      return;
+    }
+    
+    if (requestSequence.some(isNaN) || requestSequence.some(num => num < 0 || num > 199)) {
+      alert("All request positions must be between 0 and 199.");
+      return;
+    }
+    
+    // Calculate FCFS algorithm results
+    const results = calculateFCFS(requestSequence, initialHead);
+    
+    // Update results section
+    totalSeekTimeEl.textContent = results.totalSeekTime;
+    averageSeekTimeEl.textContent = (results.totalSeekTime / requestSequence.length).toFixed(2);
+    seekSequenceEl.textContent = results.seekSequence.join(' → ');
+    
+    // Update chart
+    chart.options.data[0].dataPoints = results.chartData;
+    chart.render();
+    
+    // Show results section
+    resultsSection.style.display = 'block';
+  });
+  
+  // Calculate FCFS algorithm
+  function calculateFCFS(requestSequence, initialHead) {
+    let totalSeekTime = 0;
+    let currentPosition = initialHead;
+    let seekSequence = [initialHead];
+    let chartData = [{ x: 0, y: initialHead, indexLabel: "Head" }];
+    
+    // Process each request in the order they arrived
+    for (let i = 0; i < requestSequence.length; i++) {
+      const nextPosition = requestSequence[i];
+      const seekDistance = Math.abs(nextPosition - currentPosition);
+      
+      totalSeekTime += seekDistance;
+      currentPosition = nextPosition;
+      seekSequence.push(nextPosition);
+      
+      chartData.push({
+        x: i + 1,
+        y: nextPosition,
+        indexLabel: nextPosition.toString()
+      });
+    }
+    
+    return {
+      totalSeekTime,
+      seekSequence,
+      chartData
+    };
   }
-}
+});

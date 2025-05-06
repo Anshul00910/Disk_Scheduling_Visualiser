@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FCFS Disk Scheduling</title>
+  <title>C-SCAN Disk Scheduling</title>
   <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-  <link rel="stylesheet" href="../fcfs/fcfs.css">
+  <link rel="stylesheet" href="../CSCAN/cscan.css">
 </head>
 <body>
   <header>
@@ -34,7 +34,7 @@
 
   <main class="container">
     <div class="card">
-      <h2>FCFS Disk Scheduling Algorithm</h2>
+      <h2>C-SCAN Disk Scheduling Algorithm</h2>
       
       <div class="form-group">
         <label for="sequence">Request Sequence (comma separated):</label>
@@ -44,6 +44,14 @@
       <div class="form-group">
         <label for="head">Initial Head Position:</label>
         <input type="number" id="head" placeholder="E.g., 53" min="0" max="199" autocomplete="off">
+      </div>
+      
+      <div class="form-group">
+        <label for="direction">Direction:</label>
+        <select id="direction">
+          <option value="left">Left</option>
+          <option value="right" selected>Right</option>
+        </select>
       </div>
       
       <div class="btn-container">
@@ -72,8 +80,8 @@
       </div>
       
       <div class="info-section">
-        <h3>About FCFS Disk Scheduling</h3>
-        <p>FCFS (First Come First Serve) is the simplest disk scheduling algorithm. In FCFS, the requests are addressed in the order they arrive in the disk queue. While simple to implement, FCFS can lead to long seek times if consecutive requests are far apart on the disk.</p>
+        <h3>About C-SCAN Disk Scheduling</h3>
+        <p>C-SCAN (Circular SCAN) services requests in one direction only. When the head reaches the end of the disk, it returns to the beginning without servicing any requests on the return trip. This provides a more uniform wait time compared to SCAN.</p>
       </div>
     </div>
   </main>
@@ -83,6 +91,7 @@
       <p>&copy; 2025 Disk Scheduling Visualizer. All rights reserved.</p>
     </div>
   </footer>
-  <script src="fcfs.js"></script>
+
+  <script src="cscan.js"></script>
 </body>
 </html>
