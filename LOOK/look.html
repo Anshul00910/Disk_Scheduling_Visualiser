@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>C-LOOK Disk Scheduling</title>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <link rel="stylesheet" href="../CLOOK/clook.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="../index.html" class="logo">
+          <span>Disk</span>Scheduler
+        </a>
+        <div class="nav-links">
+          <a href="../index.html" class="nav-link">Home</a>
+          <div class="dropdown">
+            <a href="#" class="nav-link active">Visualize</a>
+            <div class="dropdown-content">
+              <a href="../FCFS/fcfs.html">FCFS</a>
+              <a href="../SSTF/sstf.html">SSTF</a>
+              <a href="../SCAN/scan.html">SCAN</a>
+              <a href="../CSCAN/cscan.html">C-SCAN</a>
+              <a href="../LOOK/look.html">LOOK</a>
+              <a href="../CLOOK/clook.html">C-LOOK</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>C-LOOK Disk Scheduling Algorithm</h2>
+
+      <div class="form-group">
+        <label for="sequence">Request Sequence (comma separated):</label>
+        <input type="text" id="sequence" placeholder="E.g., 98, 183, 37, 122, 14, 124, 65, 67" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label for="head">Initial Head Position:</label>
+        <input type="number" id="head" placeholder="E.g., 53" min="0" max="199" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label for="direction">Direction:</label>
+        <select id="direction">
+          <option value="left">Left</option>
+          <option value="right" selected>Right</option>
+        </select>
+      </div>
+
+      <div class="btn-container">
+        <button id="visualize-btn" class="btn">Visualize Algorithm</button>
+      </div>
+
+      <div class="results" id="results" style="display: none;">
+        <h3>Algorithm Results</h3>
+
+        <div class="result-item">
+          <span class="result-label">Total Seek Time:</span>
+          <span class="result-value" id="total-seek-time">0</span>
+        </div>
+
+        <div class="result-item">
+          <span class="result-label">Average Seek Time:</span>
+          <span class="result-value" id="average-seek-time">0</span>
+        </div>
+
+        <div class="result-item">
+          <span class="result-label">Seek Sequence:</span>
+          <span class="result-value" id="seek-sequence"></span>
+        </div>
+
+        <div class="chart-container" id="chart-container"></div>
+      </div>
+
+      <div class="info-section">
+        <h3>About C-LOOK Disk Scheduling</h3>
+        <p>C-LOOK scheduling moves the disk arm in one direction only until the last request, then jumps back to the beginning without servicing any requests on the return trip. It's an optimized form of LOOK that reduces unnecessary movement.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Disk Scheduling Visualizer. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="clook.js"></script>
+</body>
+</html>
